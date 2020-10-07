@@ -2,7 +2,8 @@
 #include <fstream>
 #include <complex>
 #include <vector>
-
+// #include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 #include "viterbi.h"
 
 #ifndef _WIN32
@@ -24,42 +25,42 @@ size_t getFilesize(std::string filepath)
 
 int main(int argc, char *argv[])
 {
-    // Print out command syntax
-    if (argc < 3)
-    {
-        std::cout << "Usage : " << argv[0] << " -v 0.165 -o 5 inputfile.raw outputframes.bin" << std::endl;
-        std::cout << "		    -o (outsinc after decode frame number(default: 5))" << std::endl;
-        std::cout << "		    -v (viterbi treshold(default: 0.170))" << std::endl;
-        std::cout << "2020-08-15." << std::endl;
-        return 1;
-    }
+    TCLAP::CmdLine cmd("MetOp Decoder by Aang23", ' ', "1.1");
 
+    // File arguments
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Symbols.", true, "", "symbols.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames.", true, "", "outputframes.bin");
+
+    // Arguments to extract
+    TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, 0.170, "threshold");
+    TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, 5, "frames");
+
+    // Register all of the above options
+    cmd.add(valueVit);
+    cmd.add(valueOutsync);
+    cmd.add(valueInput);
+    cmd.add(valueOutput);
+    // Parse
+    try
+    {
+        cmd.parse(argc, argv);
+    }
+    catch (TCLAP::ArgException &e)
+    {
+        std::cout << e.error() << '\n';
+        return 0;
+    }
     // Variables
-    int viterbi_outsync_after = 5;
-    float viterbi_ber_threasold = 0.170;
+    int viterbi_outsync_after = valueOutsync.getValue();
+    float viterbi_ber_threshold = valueVit.getValue();
     int sw = 0;
 
-    while ((sw = getopt(argc, argv, "o:v:")) != -1)
-    {
-        switch (sw)
-        {
-        case 'o':
-            viterbi_outsync_after = std::atof(optarg);
-            break;
-        case 'v':
-            viterbi_ber_threasold = std::atof(optarg);
-            break;
-        default:
-            break;
-        }
-    }
-
     // Output and Input file
-    std::ifstream data_in(argv[argc - 2], std::ios::binary);
-    std::ofstream data_out(argv[argc - 1], std::ios::binary);
+    std::ifstream data_in(valueInput.getValue(), std::ios::binary);
+    std::ofstream data_out(valueOutput.getValue(), std::ios::binary);
 
     // MetOp Viterbi decoder
-    MetopViterbi viterbi(true, viterbi_ber_threasold, 1, viterbi_outsync_after, 50);
+    MetopViterbi viterbi(true, viterbi_ber_threshold, 1, viterbi_outsync_after, 50);
 
     // Viterbi output buffer
     uint8_t *viterbi_out = new uint8_t[BUFFER_SIZE];
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
     std::complex<float> buffer[BUFFER_SIZE];
 
     // Complete filesize
-    size_t filesize = getFilesize(argv[argc - 2]);
+    size_t filesize = getFilesize(valueInput.getValue());
 
     // Data we wrote out
     size_t data_out_total = 0;
@@ -78,7 +79,7 @@ int main(int argc, char *argv[])
     std::cout << "MetOp Decoder by Aang23" << std::endl;
     std::cout << "Fixed by Tomi HA6NAB" << std::endl;
     std::cout << "---------------------------" << std::endl;
-    std::cout << "Viterbi threshold: " << viterbi_ber_threasold << std::endl;
+    std::cout << "Viterbi threshold: " << viterbi_ber_threshold << std::endl;
     std::cout << "Outsinc after: " << viterbi_outsync_after << std::endl;
     std::cout << "---------------------------" << std::endl;
     std::cout << std::endl;

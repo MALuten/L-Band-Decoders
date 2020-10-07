@@ -4,4 +4,4 @@ Small progran that can take synced symbols from a QPSK demodulator and do the Vi
 
 Synced symbols can be obtained from the demodulator flowchart in the Flowcharts directory.
 
-Usage : `./MetOp symbols.bin outputframes.bin`
+Usage : `./MetOp -i symbols.bin -o outputframes.bin`
