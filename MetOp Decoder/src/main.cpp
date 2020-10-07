@@ -4,6 +4,7 @@
 #include <vector>
 // #include "tclap/CmdLine.h"
 #include <tclap/CmdLine.h>
+
 #include "viterbi.h"
 
 #ifndef _WIN32
