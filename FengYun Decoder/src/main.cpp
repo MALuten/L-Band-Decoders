@@ -13,6 +13,8 @@
 #include "viterbi.h"
 #include "diff.h"
 
+#include <tclap/CmdLine.h>
+
 // Processing buffer size
 #define BUFFER_SIZE (8192 * 5)
 
@@ -34,16 +36,35 @@ size_t getFilesize(std::string filepath)
 
 int main(int argc, char *argv[])
 {
-    // Print out command syntax
-    if (argc < 3)
+
+    TCLAP::CmdLine cmd("FengYun Decoder by Aang23", ' ', "1.1");
+
+    // File arguments
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input", true, "", "rawin.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "framesout.bin");
+
+    // Arguments to extract
+    TCLAP::SwitchArg valueFYab("b", "fyab", "Decode FengYun A / B satellite (default)", true);
+    TCLAP::SwitchArg valueFYcd("c", "fycd", "Decode FengYun C", false);
+    TCLAP::ValueArg<int> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, 0.170, "threshold");
+    TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, 5, "frames");
+
+    // Register all of the above options
+    cmd.add(valueFYab);
+    cmd.add(valueFYcd);
+    cmd.add(valueVit);
+    cmd.add(valueOutsync);
+    cmd.add(valueInput);
+    cmd.add(valueOutput);
+    // Parse
+    try
     {
-        std::cout << "Usage : " << argv[0] << " -b -v 0.165 -o 5 inputfile.bin outputframes.bin" << std::endl;
-        std::cout << "		    -b (decode the FY3A,B sat.)" << std::endl;
-        std::cout << "		    -c (decode the FY3C,D? sat.)" << std::endl;
-        std::cout << "		    -v (viterbi treshold(default: 0.170))" << std::endl;
-        std::cout << "		    -o (outsinc after decode frame number(default: 5))" << std::endl;
-        std::cout << "2020-08-15." << std::endl;
-        return 1;
+        cmd.parse(argc, argv);
+    }
+    catch (TCLAP::ArgException &e)
+    {
+        std::cout << e.error() << '\n';
+        return 0;
     }
 
     // Variables
@@ -115,7 +136,6 @@ int main(int argc, char *argv[])
     // Read until there is no more data
     while (!data_in.eof())
     {
-
         // Read a buffer
         data_in.read((char *)buffer, sizeof(std::complex<float>) * BUFFER_SIZE);
 
