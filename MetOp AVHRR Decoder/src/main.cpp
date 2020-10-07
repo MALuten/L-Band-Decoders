@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
         int pos = 20; // AVHRR Data, eg, User Data Field
 
         // Convert into 10-bits values
-        for (int i = 0; i < 12944; i += 4)
+        for (int i = 0; i < BUFFER_SIZE; i += 4)
         {
             avhrrBuffer[i] = (buffer[pos + 0] << 2) | (buffer[pos + 1] >> 6);
             avhrrBuffer[i + 1] = ((buffer[pos + 1] % 64) << 4) | (buffer[pos + 2] >> 4);
