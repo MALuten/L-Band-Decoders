@@ -2,4 +2,4 @@
 
 This program takes MSU-MR frames from the METEOR Demuxer and makes an image... Very basic for now! Only outputs rgb composite...
 
-Usage : `./METEOR-MSU-MR-Decoder msumrframes.bin output.png`
+Usage : `./METEOR-MSU-MR-Decoder -i msumrframes.bin -o output.png`
