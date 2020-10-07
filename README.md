@@ -19,7 +19,7 @@ Program to demultiplex / deframe CCSDS frames from unsynced CADUs.
 More info in the dedicated folder.
 
 
-### Dependencies
+## Dependencies
 
 Some projects will require (or / and) :
 - [TCLAP](http://tclap.sourceforge.net/) ([Arch](https://www.archlinux.org/packages/community/any/tclap/)/[Debian](https://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=tclap))
