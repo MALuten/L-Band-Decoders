@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     // Arguments to extract
     TCLAP::SwitchArg valueFYab("b", "fyab", "Decode FengYun A / B satellite (default)", true);
     TCLAP::SwitchArg valueFYcd("c", "fycd", "Decode FengYun C", false);
-    TCLAP::ValueArg<int> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, 0.170, "threshold");
+    TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, 0.170, "threshold");
     TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, 5, "frames");
 
     // Register all of the above options
@@ -68,35 +68,45 @@ int main(int argc, char *argv[])
     }
 
     // Variables
-    int viterbi_outsync_after = 5;
-    float viterbi_ber_threasold = 0.170;
-    int fy3c_mode = 0;
+
+    int viterbi_outsync_after = valueOutsync.getValue();
+    float viterbi_ber_threasold = valueVit.getValue();
+    int fy3c_mode;
+
+    if (valueFYab.getValue())
+    {
+        int fy3c_mode = 0;
+    }
+    else if (valueFYcd.getValue())
+    {
+        int fy3c_mode = 1;
+    }
     int sw = 0;
 
-    while ((sw = getopt(argc, argv, "bco:v:")) != -1)
-    {
-        switch (sw)
-        {
-        case 'b':
-            fy3c_mode = 0;
-            break;
-        case 'c':
-            fy3c_mode = 1;
-            break;
-        case 'o':
-            viterbi_outsync_after = std::atof(optarg);
-            break;
-        case 'v':
-            viterbi_ber_threasold = std::atof(optarg);
-            break;
-        default:
-            break;
-        }
-    }
+    // while ((sw = getopt(argc, argv, "bco:v:")) != -1)
+    // {
+    //     switch (sw)
+    //     {
+    //     case 'b':
+    //         fy3c_mode = 0;
+    //         break;
+    //     case 'c':
+    //         fy3c_mode = 1;
+    //         break;
+    //     case 'o':
+    //         viterbi_outsync_after = std::atof(optarg);
+    //         break;
+    //     case 'v':
+    //         viterbi_ber_threasold = std::atof(optarg);
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    // }
 
     // Output and Input file
-    std::ifstream data_in(argv[argc - 2], std::ios::binary);
-    std::ofstream data_out(argv[argc - 1], std::ios::binary);
+    std::ifstream data_in(valueInput.getValue(), std::ios::binary);
+    std::ofstream data_out(valueOutput.getValue(), std::ios::binary);
 
     // Our 2 Viterbi decoders and differential decoder
     FengyunViterbi viterbi1(true, viterbi_ber_threasold, 1, viterbi_outsync_after, 50), viterbi2(true, viterbi_ber_threasold, 1, viterbi_outsync_after, 50);
