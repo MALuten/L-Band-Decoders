@@ -18,14 +18,14 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output CCSDS frames", true, "", "out.bin");
 
     // VCID / APID to extract
-    TCLAP::ValueArg<int> valueVcid("v", "vcid", "Virtual Channel ID", true, 0, "vcid");
-    TCLAP::ValueArg<int> valueApid("a", "apid", "APID", false, -1, "apid");
-    TCLAP::ValueArg<int> valueSize("s", "size", "Frame size", true, 0, "size");
-    TCLAP::SwitchArg valueFengYun("f", "fengyun", "FengYun imager deframing");
-    TCLAP::SwitchArg valueAddHeader("m", "marker", "Add sync marker (1ACFFC1D) for easy syncing");
-    TCLAP::SwitchArg valueFrameLength("l", "framelength", "Show found frame length");
-    TCLAP::SwitchArg valueDerandomize("d", "derand", "Derandomize CADU frames ");
-    TCLAP::SwitchArg valueReedSolomon("r", "reedsolomon", "Use reed-solomon correction");
+    TCLAP::ValueArg<int> valueVcid("v", "vcid", "Virtual Channel ID. FY: 5 (day) 9 (night) 3 (MERSI), Metop: 9.", true, 0, "vcid");
+    TCLAP::ValueArg<int> valueApid("a", "apid", "APID. Metop: 103 (day), 104 (night).", false, -1, "apid");
+    TCLAP::ValueArg<int> valueSize("s", "size", "Frame size. FY: 208400, Metop 12966.", true, 0, "size");
+    TCLAP::SwitchArg valueFengYun("f", "fengyun", "FengYun imager deframing.");
+    TCLAP::SwitchArg valueAddHeader("m", "marker", "Add sync marker (1ACFFC1D) for easy syncing.");
+    TCLAP::SwitchArg valueFrameLength("l", "framelength", "Show found frame length.");
+    TCLAP::SwitchArg valueDerandomize("d", "derand", "Derandomize CADU frames.");
+    TCLAP::SwitchArg valueReedSolomon("r", "reedsolomon", "Use reed-solomon correction.");
 
     // Register all of the above options
     cmd.add(valueInput);
