@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd("FengYun Decoder by Aang23", ' ', "1.1");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input", true, "", "rawin.bin");
-    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "framesout.bin");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input", true, "", "symbols.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "outputframes.bin");
 
     // Arguments to extract
     TCLAP::SwitchArg valueFYab("b", "fyab", "Decode FengYun A / B satellite (default)", true);
