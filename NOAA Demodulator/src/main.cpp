@@ -3,7 +3,8 @@
 #include <complex>
 #include <vector>
 #include <cstdint>
-#include "tclap/CmdLine.h"
+// #include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 #include "agc.h"
 #include "pll.h"
 #include "moving_average.h"
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "frames.bin");
 
     // VCID / APID to extract
-    TCLAP::ValueArg<int> valueSamplerate("s", "samplerate", "Baseband samplerate", true, 6000000, "6000000");
+    TCLAP::ValueArg<int> valueSamplerate("s", "samplerate", "Baseband samplerate. Default: 6000000", true, 6000000, "6000000");
 
     // Baseband format
     TCLAP::SwitchArg valueF32Baseband("f", "float32", "Input baseband as float32");
