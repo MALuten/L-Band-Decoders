@@ -6,6 +6,8 @@
 #define cimg_use_png
 #define cimg_display 0
 #include "CImg.h"
+// #include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
 // Processing buffer size
 #define BUFFER_SIZE (248 * 2)
@@ -19,8 +21,31 @@ inline bool getBit(T &data, int &bit)
 
 int main(int argc, char *argv[])
 {
+   TCLAP::CmdLine cmd("Meteor MTVZA decoder by Aang23", ' ', "1.1");
+
+    // File arguments
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Demuxed frames", true, "", "demuxedframes.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image", true, "", "out.png");
+
+    // Register all of the above options
+    cmd.add(valueInput);
+    cmd.add(valueOutput);
+
+    // Parse
+    try
+    {
+        cmd.parse(argc, argv);
+    }
+    catch (TCLAP::ArgException &e)
+    {
+        std::cout << e.error() << '\n';
+        return 0;
+    }
+
     // Output and Input file
-    std::ifstream data_in(argv[1], std::ios::binary);
+    std::ifstream data_in(valueInput.getValue(), std::ios::binary);
+    char outputImage[valueOutput.getValue().size() + 1];
+    strcpy(outputImage, valueOutput.getValue().c_str());
 
     // Read buffer
     uint8_t buffer[BUFFER_SIZE];
@@ -102,7 +127,8 @@ int main(int argc, char *argv[])
     finalImage.draw_image(0, 0, 0, 1, channelImageG);
     finalImage.draw_image(0, 0, 0, 2, channelImageB);
 
-    channelImageR.save_png(argv[2]);
+    channelImageR.save_png(outputImage);
+    // finalImage.save_png(outputImage);   // Isn't it supposed to be this?
 
     data_in.close();
 }
