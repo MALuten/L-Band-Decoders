@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     std::vector<uint8_t> *diff_in = new std::vector<uint8_t>, *diff_out = new std::vector<uint8_t>;
 
     // Complete filesize
-    size_t filesize = getFilesize(argv[argc - 2]);
+    size_t filesize = getFilesize(valueInput.getValue());
 
     // Data we wrote out
     size_t data_out_total = 0;
