@@ -84,27 +84,6 @@ int main(int argc, char *argv[])
     }
     int sw = 0;
 
-    // while ((sw = getopt(argc, argv, "bco:v:")) != -1)
-    // {
-    //     switch (sw)
-    //     {
-    //     case 'b':
-    //         fy3c_mode = 0;
-    //         break;
-    //     case 'c':
-    //         fy3c_mode = 1;
-    //         break;
-    //     case 'o':
-    //         viterbi_outsync_after = std::atof(optarg);
-    //         break;
-    //     case 'v':
-    //         viterbi_ber_threasold = std::atof(optarg);
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
-
     // Output and Input file
     std::ifstream data_in(valueInput.getValue(), std::ios::binary);
     std::ofstream data_out(valueOutput.getValue(), std::ios::binary);
