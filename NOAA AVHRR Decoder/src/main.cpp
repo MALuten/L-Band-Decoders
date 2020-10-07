@@ -6,6 +6,8 @@
 #define cimg_use_png
 #define cimg_display 0
 #include "CImg.h"
+// #include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
 // Processing buffer size
 #define BUFFER_SIZE (11090 * 2)
@@ -19,8 +21,31 @@ inline bool getBit(T &data, int &bit)
 
 int main(int argc, char *argv[])
 {
+    TCLAP::CmdLine cmd("NOAA AVHRR decoder by Aang23", ' ', "1.1");
+
+    // File arguments
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "AVHRR frames", true, "", "avhrrframes.raw16");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image", true, "", "output.png");
+
+    // Register all of the above options
+    cmd.add(valueInput);
+    cmd.add(valueOutput);
+
+    // Parse
+    try
+    {
+        cmd.parse(argc, argv);
+    }
+    catch (TCLAP::ArgException &e)
+    {
+        std::cout << e.error() << '\n';
+        return 0;
+    }
+
     // Output and Input file
-    std::ifstream data_in(argv[1], std::ios::binary);
+    std::ifstream data_in(valueInput.getValue(), std::ios::binary);
+    char outputImage[valueOutput.getValue().size() + 1];
+    strcpy(outputImage, valueOutput.getValue().c_str());
 
     // Read buffer
     uint16_t buffer[BUFFER_SIZE / 2];
@@ -77,7 +102,7 @@ int main(int argc, char *argv[])
     finalImage.draw_image(0, 0, 0, 1, channelImageG);
     finalImage.draw_image(0, 0, 0, 2, channelImageB);
 
-    finalImage.save_png(argv[2]);
+    finalImage.save_png(outputImage);
 
     data_in.close();
 }
