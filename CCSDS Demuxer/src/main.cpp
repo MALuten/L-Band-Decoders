@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd("CCSDS Demuxer by Aang23", ' ', "1.0");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input frames", true, "", "frames.bin");
-    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output CCSDS frames", true, "", "out.bin");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input frames.", true, "", "frames.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output CCSDS frames.", true, "", "out.bin");
 
     // VCID / APID to extract
     TCLAP::ValueArg<int> valueVcid("v", "vcid", "Virtual Channel ID. FY: 5 (day) 9 (night) 3 (MERSI), Metop: 9.", true, 0, "vcid");
