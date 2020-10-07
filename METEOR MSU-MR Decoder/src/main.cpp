@@ -22,10 +22,10 @@ inline bool getBit(T &data, int &bit)
 int main(int argc, char *argv[])
 
 {
- TCLAP::CmdLine cmd("FengYun VIRR decoder by Aang23", ' ', "1.1");
+ TCLAP::CmdLine cmd("Meteor MSU-MR decoder by Aang23", ' ', "1.1");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Demuxed frames", true, "", "msumrframes.bin");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Demuxed frames", true, "", "demuxedframes.bin");
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image", true, "", "out.png");
 
     // Register all of the above options
