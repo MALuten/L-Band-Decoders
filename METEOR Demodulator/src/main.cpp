@@ -3,7 +3,8 @@
 #include <complex>
 #include <vector>
 #include <cstdint>
-#include "tclap/CmdLine.h"
+// #include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 #include "agc.h"
 #include "pll.h"
 #include "moving_average.h"
@@ -56,8 +57,8 @@ int main(int argc, char *argv[])
 
     // Baseband format
     TCLAP::SwitchArg valueF32Baseband("f", "float32", "Input baseband as float32");
-    TCLAP::SwitchArg valueInt16Baseband("6", "int16", "Input baseband as int16");
-    TCLAP::SwitchArg valueInt8Baseband("8", "int8", "Input baseband as int8");
+    TCLAP::SwitchArg valueInt16Baseband("", "int16", "Input baseband as int16");
+    TCLAP::SwitchArg valueInt8Baseband("", "int8", "Input baseband as int8");
 
     // Register all of the above options
     cmd.add(valueInput);
