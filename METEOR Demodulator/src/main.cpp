@@ -46,19 +46,19 @@ void volk_32f_binary_slicer_8i_generic(int8_t *cVector, const float *aVector, un
 
 int main(int argc, char *argv[])
 {
-    TCLAP::CmdLine cmd("METEOR HRPT Demodulator / Deframer by Aang23", ' ', "1.0");
+    TCLAP::CmdLine cmd("METEOR HRPT Demodulator / Deframer by Aang23", ' ', "1.1");
 
     // File arguments
     TCLAP::ValueArg<std::string> valueInput("i", "input", "Baseband input", true, "", "baseband.raw");
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "frames.bin");
 
     // VCID / APID to extract
-    TCLAP::ValueArg<int> valueSamplerate("s", "samplerate", "Baseband samplerate", true, 6000000, "6000000");
+    TCLAP::ValueArg<int> valueSamplerate("s", "samplerate", "Baseband samplerate. Default: 6000000", true, 6000000, "6000000");
 
     // Baseband format
     TCLAP::SwitchArg valueF32Baseband("f", "float32", "Input baseband as float32");
-    TCLAP::SwitchArg valueInt16Baseband("", "int16", "Input baseband as int16");
-    TCLAP::SwitchArg valueInt8Baseband("", "int8", "Input baseband as int8");
+    TCLAP::SwitchArg valueInt16Baseband("6", "int16", "Input baseband as int16");
+    TCLAP::SwitchArg valueInt8Baseband("8", "int8", "Input baseband as int8");
 
     // Register all of the above options
     cmd.add(valueInput);
