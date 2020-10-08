@@ -22,4 +22,4 @@ More info in the dedicated folder.
 ## Dependencies
 
 Some projects will require (or / and) :
-- [TCLAP](http://tclap.sourceforge.net/) ([Arch](https://www.archlinux.org/packages/community/any/tclap/)/[Debian](https://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=tclap))
+- [TCLAP](http://tclap.sourceforge.net/) ([Arch](https://www.archlinux.org/packages/community/any/tclap/)/[Debian](https://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=tclap)/[Ubuntu](https://launchpad.net/ubuntu/+source/tclap))
