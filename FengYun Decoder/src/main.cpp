@@ -49,6 +49,8 @@ int main(int argc, char *argv[])
     TCLAP::SwitchArg valueFYcd("c", "fycd", "Decode FengYun C", false);
     TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, 0.170, "threshold");
     TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, 5, "frames");
+        TCLAP::SwitchArg valueVerbose("V", "verbose", "Show more output", false);
+
 
     // Register all of the above options
     cmd.add(valueFYab);
@@ -57,6 +59,7 @@ int main(int argc, char *argv[])
     cmd.add(valueOutsync);
     cmd.add(valueInput);
     cmd.add(valueOutput);
+    cmd.add(valueVerbose);
     // Parse
     try
     {
@@ -122,6 +125,10 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
 
     int shift = 0;
+    if (!valueVerbose.getValue()){
+                std::cout << "Running" << std::endl;
+
+    }
 
     // Read until there is no more data
     while (!data_in.eof())
@@ -244,8 +251,9 @@ int main(int argc, char *argv[])
         data_out_total += diff_out->size() / 4;
 
         // Console stuff
+        if (valueVerbose.getValue()){
         std::cout << '\r' << "Viterbi 1 : " << (viterbi1.getState() == 0 ? "NO SYNC" : viterbi1.getState() == 1 ? "SYNCING" : "SYNCED") << ", Viterbi 2 : " << (viterbi2.getState() == 0 ? "NO SYNC" : viterbi2.getState() == 1 ? "SYNCING" : "SYNCED") << ", Data out : " << round(data_out_total / 1e5) / 10.0f << " MB, Progress : " << round(((float)data_in.tellg() / (float)filesize) * 1000.0f) / 10.0f << "%     " << std::flush;
-
+        }
         // Clear everything for the next run
         diff_in->clear();
         iSamples->clear();
