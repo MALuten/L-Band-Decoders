@@ -6,6 +6,9 @@
 #include <tclap/CmdLine.h>
 
 #include "viterbi.h"
+// Define standard  values
+#define viterbi_def_thres 0.170
+#define outsync_def 5
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -33,14 +36,16 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames.", true, "", "outputframes.bin");
 
     // Arguments to extract
-    TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, 0.170, "threshold");
-    TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, 5, "frames");
+    TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, viterbi_def_thres, "threshold");
+    TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, outsync_def, "frames");
+    TCLAP::SwitchArg valueHardsym("H", "hardsymbols", "Enable hard symbols as input (slower)", false);
 
     // Register all of the above options
+    cmd.add(valueHardsym);
     cmd.add(valueVit);
     cmd.add(valueOutsync);
-    cmd.add(valueInput);
     cmd.add(valueOutput);
+    cmd.add(valueInput);
     // Parse
     try
     {
@@ -51,10 +56,12 @@ int main(int argc, char *argv[])
         std::cout << e.error() << '\n';
         return 0;
     }
+
     // Variables
     int viterbi_outsync_after = valueOutsync.getValue();
     float viterbi_ber_threshold = valueVit.getValue();
-    int sw = 0;
+    bool softSymbols = true;
+    valueHardsym.getValue() ? softSymbols = 0 : softSymbols = 1;
 
     // Output and Input file
     std::ifstream data_in(valueInput.getValue(), std::ios::binary);
@@ -68,6 +75,7 @@ int main(int argc, char *argv[])
 
     // Read buffer
     std::complex<float> buffer[BUFFER_SIZE];
+    int8_t *soft_buffer = new int8_t[BUFFER_SIZE * 2];
 
     // Complete filesize
     size_t filesize = getFilesize(valueInput.getValue());
@@ -88,8 +96,22 @@ int main(int argc, char *argv[])
     // Read until EOF
     while (!data_in.eof())
     {
-        // Read buffer
-        data_in.read((char *)buffer, sizeof(std::complex<float>) * BUFFER_SIZE);
+        // Read a buffer
+        if (softSymbols)
+        {
+            data_in.read((char *)soft_buffer, BUFFER_SIZE * 2);
+
+            // Convert to hard symbols from soft symbols. We may want to work with soft only later?
+            for (int i = 0; i < BUFFER_SIZE; i++)
+            {
+                using namespace std::complex_literals;
+                buffer[i] = ((float)soft_buffer[i * 2 + 1] / 127.0f) + ((float)soft_buffer[i * 2] / 127.0f) * 1if;
+            }
+        }
+        else
+        {
+            data_in.read((char *)buffer, sizeof(std::complex<float>) * BUFFER_SIZE);
+        }
 
         // Push into Viterbi
         int num_samp = viterbi.work(buffer, BUFFER_SIZE, viterbi_out);
