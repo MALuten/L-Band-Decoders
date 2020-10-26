@@ -30,13 +30,13 @@ int main(int argc, char *argv[])
 
     // Define the arguments
     TCLAP::ValueArg<int> valueChannel("c", "channel", "Channel to extract", true, 0, "channel");
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input file", true, "", "file");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Demodulated input file", true, "", "demodulatedinput.raw32");
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image file", true, "", "image.png");
 
     //add the arguments
-    cmd.add(valueInput);
-    cmd.add(valueOutput);
     cmd.add(valueChannel);
+    cmd.add(valueOutput);
+    cmd.add(valueInput);
 
     //parse arguments
     try

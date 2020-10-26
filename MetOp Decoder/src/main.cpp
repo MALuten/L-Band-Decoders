@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd("MetOp Decoder by Aang23", ' ', "1.1");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Symbols.", true, "", "symbols.bin");
-    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames.", true, "", "outputframes.bin");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Symbols input", true, "", "symbols.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "outputframes.bin");
 
     // Arguments to extract
     TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, viterbi_def_thres, "threshold");
@@ -41,9 +41,9 @@ int main(int argc, char *argv[])
     TCLAP::SwitchArg valueHardsym("H", "hardsymbols", "Enable hard symbols as input (slower)", false);
 
     // Register all of the above options
-    cmd.add(valueHardsym);
     cmd.add(valueVit);
     cmd.add(valueOutsync);
+    cmd.add(valueHardsym);
     cmd.add(valueOutput);
     cmd.add(valueInput);
     // Parse

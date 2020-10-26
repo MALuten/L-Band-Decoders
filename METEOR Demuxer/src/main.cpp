@@ -14,12 +14,12 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd("METEOR Demuxer by Aang23", ' ', "1.0");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input frames", true, "", "frames.bin");
-    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output filename for frames", true, "", "out");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Decoded input", true, "", "inputframes.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output demuxed frames", true, "", "demuxedframes.bin");
 
     // Register all of the above options
-    cmd.add(valueInput);
     cmd.add(valueOutput);
+    cmd.add(valueInput);
 
     // Parse
     try

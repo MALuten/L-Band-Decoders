@@ -24,12 +24,12 @@ int main(int argc, char *argv[])
    TCLAP::CmdLine cmd("MetOp AVHRR decoder by Aang23", ' ', "1.1");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Demuxed frames", true, "", "avhrrframes.bin");
-    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image", true, "", "out.png");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Demuxed frames input", true, "", "demuxedframes.bin");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image", true, "", "image.png");
 
     // Register all of the above options
-    cmd.add(valueInput);
     cmd.add(valueOutput);
+    cmd.add(valueInput);
 
     // Parse
     try
