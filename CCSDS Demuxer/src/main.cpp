@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<int> valueApid("a", "apid", "APID. Metop: 103 (day), 104 (night)", false, -1, "apid");
     TCLAP::ValueArg<int> valueSize("s", "size", "Frame size. FY: 208400, Metop 12966", true, 0, "size");
     TCLAP::SwitchArg valueFengYun("f", "fengyun", "FengYun imager deframing");
-    TCLAP::SwitchArg valueAddHeader("m", "marker", "Add sync marker (1ACFFC1D) for easy syncing");
+    TCLAP::SwitchArg valueAddHeader("m", "marker", "Add sync. marker (1ACFFC1D) for easy syncing");
     TCLAP::SwitchArg valueFrameLength("l", "framelength", "Show found frame length");
     TCLAP::SwitchArg valueDerandomize("d", "derand", "Derandomize CADU frames");
     TCLAP::SwitchArg valueReedSolomon("r", "reedsolomon", "Use reed-solomon correction");
