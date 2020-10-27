@@ -72,11 +72,6 @@ int main(int argc, char *argv[])
     // Read until EOF
     while (!data_in.eof())
     {
-        if (argc != 2)
-        {
-            std::cout << "Usage : " << argv[0] << " inputFrames.bin" << std::endl;
-            return 0;
-        }
 
         // Complete filesize
         size_t filesize = getFilesize(valueInput.getValue());
