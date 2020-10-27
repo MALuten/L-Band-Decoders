@@ -1,6 +1,17 @@
 # L-Band Satellite Decoders
 
 A few small projects aimed at decoding various L-Band satellites
+### Installation 
+
+Install from source:
+
+```
+git clone https://github.com/altillimity/L-Band-Decoders.git
+mkdir build && cd build
+cmake ../
+make
+```
+Package is also available on the ([AUR](https://aur.archlinux.org/packages/l-band-decoders-git/)
 
 ### Dependencies
 
@@ -9,6 +20,7 @@ Some projects will require (or / and) :
 - [libcorrect](https://github.com/quiet/libcorrect)
 - [libfec](https://github.com/quiet/libfec)
 - [libpng](https://github.com/glennrp/libpng) + [zlib](https://github.com/madler/zlib)
+- [TCLAP](http://tclap.sourceforge.net/)
 
 The flowcharts require GNU Radio 3.8 or above.
 
@@ -21,11 +33,6 @@ The flowcharts require GNU Radio 3.8 or above.
 
 Program to demultiplex / deframe CCSDS frames from unsynced CADUs.
 More info in the dedicated folder.
-
-## Dependencies
-
-Some projects will require (or / and) :
-- [TCLAP](http://tclap.sourceforge.net/) ([Arch](https://www.archlinux.org/packages/community/any/tclap/)/[Debian](https://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=tclap)/[Ubuntu](https://launchpad.net/ubuntu/+source/tclap))
 
 **Decoding :**
 - Record a baseband 
