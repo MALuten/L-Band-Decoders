@@ -11,7 +11,7 @@ mkdir build && cd build
 cmake ../
 make
 ```
-Package is also available on the ([AUR](https://aur.archlinux.org/packages/l-band-decoders-git/)
+Package is also available on the ([AUR](https://aur.archlinux.org/packages/l-band-decoders-git/))
 
 ### Dependencies
 
