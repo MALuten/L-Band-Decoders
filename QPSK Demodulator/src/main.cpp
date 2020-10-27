@@ -40,13 +40,13 @@ int main(int argc, char *argv[])
     TCLAP::SwitchArg valueInt8Baseband("8", "int8", "Input baseband as int8");
 
     // Register all of the above options
-    cmd.add(valueInput);
-    cmd.add(valueOutput);
-    cmd.add(valueSamplerate);
-    cmd.add(valueSymbolrate);
     cmd.add(valueF32Baseband);
     cmd.add(valueInt16Baseband);
     cmd.add(valueInt8Baseband);
+    cmd.add(valueSymbolrate);
+    cmd.add(valueSamplerate);
+    cmd.add(valueOutput);
+    cmd.add(valueInput);
 
     // Parse
     try

@@ -15,9 +15,14 @@
 
 // #include "tclap/CmdLine.h"
 #include <tclap/CmdLine.h>
+#include "ctpl/ctpl_stl.h"
 
 // Processing buffer size
 #define BUFFER_SIZE (8192 * 5)
+
+// Define standard  values
+#define viterbi_def_thres 0.170
+#define outsync_def 5
 
 // Small function that returns 1 bit from any type
 template <typename T>
@@ -41,22 +46,26 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd("FengYun Decoder by Aang23", ' ', "1.1");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "Raw input", true, "", "symbols.bin");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "Symbols input", true, "", "symbols.bin");
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "outputframes.bin");
 
     // Arguments to extract
     TCLAP::SwitchArg valueFYab("b", "fyab", "Decode FengYun A / B satellite (default)", true);
     TCLAP::SwitchArg valueFYcd("c", "fycd", "Decode FengYun C", false);
-    TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, 0.170, "threshold");
-    TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, 5, "frames");
+    TCLAP::ValueArg<float> valueVit("v", "viterbi", "Viterbi threshold (default: 0.170)", false, viterbi_def_thres, "threshold");
+    TCLAP::ValueArg<int> valueOutsync("s", "outsync", "Outsync after no. frames (default: 5)", false, outsync_def, "frames");
+    TCLAP::SwitchArg valueVerbose("V", "verbose", "Show less output", false);
+    TCLAP::SwitchArg valueHardsym("H", "hardsymbols", "Enable hard symbols as input (slower)", false);
 
     // Register all of the above options
+    cmd.add(valueVerbose);
     cmd.add(valueFYab);
     cmd.add(valueFYcd);
+    cmd.add(valueHardsym);
     cmd.add(valueVit);
     cmd.add(valueOutsync);
-    cmd.add(valueInput);
     cmd.add(valueOutput);
+    cmd.add(valueInput);
     // Parse
     try
     {
@@ -68,21 +77,19 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Variables
+    // Multithreading stuff
+    ctpl::thread_pool viterbi_pool(2);
+    std::future<void> v1_fut, v2_fut;
 
+    int v1, v2;
+
+    // Variables
     int viterbi_outsync_after = valueOutsync.getValue();
     float viterbi_ber_threasold = valueVit.getValue();
     int fy3c_mode;
-
-    if (valueFYab.getValue())
-    {
-        int fy3c_mode = 0;
-    }
-    else if (valueFYcd.getValue())
-    {
-        int fy3c_mode = 1;
-    }
-    int sw = 0;
+    bool softSymbols = true;
+    valueFYcd.getValue() ? fy3c_mode = 1 : fy3c_mode = 0;
+    valueHardsym.getValue() ? softSymbols = 0 : softSymbols = 1;
 
     // Output and Input file
     std::ifstream data_in(valueInput.getValue(), std::ios::binary);
@@ -102,6 +109,7 @@ int main(int argc, char *argv[])
 
     // Read buffer
     std::complex<float> buffer[BUFFER_SIZE];
+    int8_t *soft_buffer = new int8_t[BUFFER_SIZE * 2];
 
     // Diff decoder input and output
     std::vector<uint8_t> *diff_in = new std::vector<uint8_t>, *diff_out = new std::vector<uint8_t>;
@@ -122,12 +130,30 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
 
     int shift = 0;
+    if (valueVerbose.getValue())
+    {
+        std::cout << "Running" << std::endl;
+    }
 
     // Read until there is no more data
     while (!data_in.eof())
     {
         // Read a buffer
-        data_in.read((char *)buffer, sizeof(std::complex<float>) * BUFFER_SIZE);
+        if (softSymbols)
+        {
+            data_in.read((char *)soft_buffer, BUFFER_SIZE * 2);
+
+            // Convert to hard symbols from soft symbols. We may want to work with soft only later?
+            for (int i = 0; i < BUFFER_SIZE; i++)
+            {
+                using namespace std::complex_literals;
+                buffer[i] = ((float)soft_buffer[i * 2 + 1] / 127.0f) + ((float)soft_buffer[i * 2] / 127.0f) * 1if;
+            }
+        }
+        else
+        {
+            data_in.read((char *)buffer, sizeof(std::complex<float>) * BUFFER_SIZE);
+        }
 
         // Deinterleave I & Q for the 2 Viterbis
         for (int i = 0; i < BUFFER_SIZE / 2; i++)
@@ -146,8 +172,10 @@ int main(int argc, char *argv[])
             }
         }
         // Run Viterbi!
-        int v1 = viterbi1.work(*qSamples, qSamples->size(), viterbi1_out);
-        int v2 = viterbi2.work(*iSamples, iSamples->size(), viterbi2_out);
+        v1_fut = viterbi_pool.push([&](int) { v1 = viterbi1.work(*qSamples, qSamples->size(), viterbi1_out); });
+        v2_fut = viterbi_pool.push([&](int) { v2 = viterbi2.work(*iSamples, iSamples->size(), viterbi2_out); });
+        v1_fut.get();
+        v2_fut.get();
 
         // Interleave and pack output into 2 bits chunks
         if (v1 > 0 || v2 > 0)
@@ -197,8 +225,10 @@ int main(int argc, char *argv[])
                 }
             }
             // Run Viterbi!
-            int v1 = viterbi1.work(*qSamples, qSamples->size(), viterbi1_out);
-            int v2 = viterbi2.work(*iSamples, iSamples->size(), viterbi2_out);
+            v1_fut = viterbi_pool.push([&](int) { v1 = viterbi1.work(*qSamples, qSamples->size(), viterbi1_out); });
+            v2_fut = viterbi_pool.push([&](int) { v2 = viterbi2.work(*iSamples, iSamples->size(), viterbi2_out); });
+            v1_fut.get();
+            v2_fut.get();
 
             // Interleave and pack output into 2 bits chunks
             if (v1 > 0 || v2 > 0)
@@ -244,8 +274,10 @@ int main(int argc, char *argv[])
         data_out_total += diff_out->size() / 4;
 
         // Console stuff
-        std::cout << '\r' << "Viterbi 1 : " << (viterbi1.getState() == 0 ? "NO SYNC" : viterbi1.getState() == 1 ? "SYNCING" : "SYNCED") << ", Viterbi 2 : " << (viterbi2.getState() == 0 ? "NO SYNC" : viterbi2.getState() == 1 ? "SYNCING" : "SYNCED") << ", Data out : " << round(data_out_total / 1e5) / 10.0f << " MB, Progress : " << round(((float)data_in.tellg() / (float)filesize) * 1000.0f) / 10.0f << "%     " << std::flush;
-
+        if (!valueVerbose.getValue())
+        {
+            std::cout << '\r' << "Viterbi 1 : " << (viterbi1.getState() == 0 ? "NO SYNC" : viterbi1.getState() == 1 ? "SYNCING" : "SYNCED") << ", Viterbi 2 : " << (viterbi2.getState() == 0 ? "NO SYNC" : viterbi2.getState() == 1 ? "SYNCING" : "SYNCED") << ", Data out : " << round(data_out_total / 1e5) / 10.0f << " MB, Progress : " << round(((float)data_in.tellg() / (float)filesize) * 1000.0f) / 10.0f << "%     " << std::flush;
+        }
         // Clear everything for the next run
         diff_in->clear();
         iSamples->clear();

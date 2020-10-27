@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<std::string> valueInput("i", "input", "Baseband input", true, "", "baseband.raw");
     TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output frames", true, "", "frames.bin");
 
-    // VCID / APID to extract
+    // Samplerate
     TCLAP::ValueArg<int> valueSamplerate("s", "samplerate", "Baseband samplerate. Default: 6000000", true, 6000000, "6000000");
 
     // Baseband format
@@ -61,12 +61,12 @@ int main(int argc, char *argv[])
     TCLAP::SwitchArg valueInt8Baseband("8", "int8", "Input baseband as int8");
 
     // Register all of the above options
-    cmd.add(valueInput);
-    cmd.add(valueOutput);
-    cmd.add(valueSamplerate);
     cmd.add(valueF32Baseband);
     cmd.add(valueInt16Baseband);
     cmd.add(valueInt8Baseband);
+    cmd.add(valueSamplerate);
+    cmd.add(valueOutput);
+    cmd.add(valueInput);
 
     // Parse
     try

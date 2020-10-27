@@ -24,12 +24,12 @@ int main(int argc, char *argv[])
     TCLAP::CmdLine cmd("NOAA AVHRR decoder by Aang23", ' ', "1.1");
 
     // File arguments
-    TCLAP::ValueArg<std::string> valueInput("i", "input", "AVHRR frames", true, "", "avhrrframes.raw16");
-    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image", true, "", "output.png");
+    TCLAP::ValueArg<std::string> valueInput("i", "input", "AVHRR frames input", true, "", "avhrrframes.raw16");
+    TCLAP::ValueArg<std::string> valueOutput("o", "output", "Output image", true, "", "image.png");
 
     // Register all of the above options
-    cmd.add(valueInput);
     cmd.add(valueOutput);
+    cmd.add(valueInput);
 
     // Parse
     try
