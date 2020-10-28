@@ -4,6 +4,7 @@
 #include <vector>
 #include "virr_deframer.h"
 #include "virr_reader.h"
+#include "xfr.h"
 
 // #include "tclap/CmdLine.h"
 #include <tclap/CmdLine.h>
@@ -59,10 +60,11 @@ int main(int argc, char *argv[])
     VIRRReader reader;
 
     // Graphics
-    std::cout << "---------------------------" << std::endl;
-    std::cout << "     FengYun-3 (A/B/C)" << std::endl;
-    std::cout << "  VIRR Decoder by Aang23" << std::endl;
-    std::cout << "---------------------------" << std::endl;
+    std::cout << "----------------------------" << std::endl;
+    std::cout << "      FengYun-3 (A/B/C)" << std::endl;
+    std::cout << "   VIRR Decoder by Aang23" << std::endl;
+    std::cout << " with xfr support by Zbychu" << std::endl;
+    std::cout << "----------------------------" << std::endl;
     std::cout << std::endl;
 
     std::cout << "Demultiplexing and deframing..." << std::endl;
@@ -168,7 +170,7 @@ int main(int argc, char *argv[])
     }
     image221.save_png("VIRR-RGB-221.png");
 
-    std::cout << "321 Composite..." << std::endl;
+    std::cout << "621 Composite..." << std::endl;
     cimg_library::CImg<unsigned short> image621(2048, reader.lines, 1, 3);
     {
         image621.draw_image(2, 1, 0, 0, image6);
@@ -209,6 +211,21 @@ int main(int argc, char *argv[])
     }
     image917.save_png("VIRR-RGB-917.png");
     // finalImage.save_png(outputImage);
+
+    std::cout << "197 True Color XFR Composite... (by ZbychuButItWasTaken)" << std::endl;
+    cimg_library::CImg<unsigned short> image197truecolorxfr(2048, reader.lines, 1, 3);
+    {
+        cimg_library::CImg<unsigned short> tempImage1 = image1, tempImage9 = image9, tempImage7 = image7;
+
+        XFR trueColor(26, 663, 165, 34, 999, 162, 47, 829, 165);
+
+        applyXFR(trueColor, tempImage1, tempImage9, tempImage7);
+
+        image197truecolorxfr.draw_image(1, 0, 0, 0, tempImage1);
+        image197truecolorxfr.draw_image(0, 0, 0, 1, tempImage9);
+        image197truecolorxfr.draw_image(-2, 0, 0, 2, tempImage7);
+    }
+    image197truecolorxfr.save_png("VIRR-RGB-197-TRUECOLOR.png");
 
     data_in.close();
 }
